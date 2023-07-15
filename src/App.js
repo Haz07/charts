@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Papa from 'papaparse';
 import Select from 'react-select';
 import { Bar } from 'react-chartjs-2';
+import DatePicker from 'react-datepicker';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,8 +12,15 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import { format, isWithinInterval, parse, parseISO } from 'date-fns';
 import './App.css';
 import data from './assets/data.js';
+import 'react-datepicker/dist/react-datepicker.css';
+
+const parseDateString = (dateString) => {
+  const [day, month, year] = dateString.split('/');
+  return parse(`${year}-${month}-${day}`, 'yyyy-MM-dd', new Date());
+};
 
 const options = {
   responsive: true,
@@ -44,6 +52,8 @@ function App() {
   const [dates, setDates] = useState([]);
   const [count, setCount] = useState([]);
   const [filter, setFilter] = useState();
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
 
   ChartJS.register(
     CategoryScale,
@@ -59,7 +69,7 @@ function App() {
       skipEmptyLines: true,
       complete: function (results) {
         setDataset(results.data);
-        setDates([...new Set(results.data.map((item) => item.Date))]);
+        setDates([...new Set(results.data.map((item) => item.Date))].sort());
       },
     });
   }, []);
@@ -76,6 +86,19 @@ function App() {
     }, new Map());
     setCount(res);
   }, [dataset, filter]);
+
+  useEffect(() => {
+    if (startDate && endDate) {
+      setDates(
+        [...new Set(dataset.map((item) => item.Date))].sort().filter((date) =>
+          isWithinInterval(parseDateString(date), {
+            start: startDate,
+            end: endDate,
+          })
+        )
+      );
+    }
+  }, [startDate, endDate]);
 
   const graphData = {
     labels: dates,
@@ -94,7 +117,7 @@ function App() {
         <div className='select-container'>
           <Select
             defaultValue={''}
-            placeholder={'Select Date Range'}
+            placeholder={'Select Game'}
             isClearable={true}
             name='color'
             options={[...new Set(dataset.map((item) => item.App))].map(
@@ -108,6 +131,23 @@ function App() {
                 marginBottom: 5,
               }),
             }}
+          />
+        </div>
+        <div className='select-container'>
+          <DatePicker
+            selected={startDate}
+            onChange={(date) => setStartDate(date)}
+            selectsStart
+            startDate={startDate}
+            endDate={endDate}
+          />
+          <DatePicker
+            selected={endDate}
+            onChange={(date) => setEndDate(date)}
+            selectsEnd
+            startDate={startDate}
+            endDate={endDate}
+            minDate={startDate}
           />
         </div>
 
