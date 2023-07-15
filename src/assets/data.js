@@ -1,4 +1,4 @@
-Date,Country,App,Platform,Ad Network,Daily Users
+export default `Date,Country,App,Platform,Ad Network,Daily Users
 22/10/2018,FR,Carz,ios,Ad Network 1,3
 19/10/2018,AE,Blast!,ios,Organic,31
 17/10/2018,ZM,Blast!,ios,Ad Network 1,2
@@ -4984,4 +4984,4 @@ Date,Country,App,Platform,Ad Network,Daily Users
 17/10/2018,FJ,Blast!,ios,Ad Network 1,2
 22/10/2018,CN,Blast!,ios,Ad Network 1,10
 20/10/2018,CA,Blast!,ios,Ad Network 3,5
-21/10/2018,AU,Blast!,ios,Ad Network 1,32
+21/10/2018,AU,Blast!,ios,Ad Network 1,32`;
